@@ -1,0 +1,63 @@
+import pprint
+
+from bson import ObjectId
+from pymongo import MongoClient
+
+connection_string = "mongodb+srv://federica:federica@cluster1.1mnlttb.mongodb.net/?appName=mongosh+2.2.10"
+
+client = MongoClient(connection_string)
+
+# Get reference to 'bank' database
+db = client.sample_analytics
+
+# Get reference to 'accounts' collection
+accounts_collection = db.accounts
+customers_collection = db.customers
+transactions_collection = db.transactions
+
+new_account = {
+    "account_id": 123456,
+    "limit": 10000,
+    "product": ["Brokerage", "Derivatives", "CurrencyService", "InvestmentFund", "InvestmentStock"]
+}
+
+# Write an expression that inserts the 'new_account' document into the 'accounts' collection.
+result = accounts_collection.insert_one(new_account)
+
+document_id = result.inserted_id
+print(f"_id of inserted document: {document_id}")
+
+document_to_find = {"_id": ObjectId(document_id)}
+
+pprint.pprint(accounts_collection.find_one(document_to_find))
+
+document_to_find = {"accounts": {"$in": [987709]}}
+
+cursor = customers_collection.find(document_to_find)
+
+num_docs = 0
+for document in cursor:
+    num_docs += 1
+    pprint.pprint(document)
+    print()
+print("# of documents found: " + str(num_docs))
+
+document_to_update = {"_id": ObjectId(document_id)}
+
+pprint.pprint(accounts_collection.find_one(document_to_update))
+
+add_product = {"$push": {"product": "Inv"}}
+result = accounts_collection.update_one(document_to_update, add_product)
+print("Documents updated: " + str(result.modified_count))
+
+pprint.pprint(accounts_collection.find_one(document_to_update))
+
+documents_to_delete = {"account_id": 123456}
+
+result = accounts_collection.delete_many(documents_to_delete)
+print("Documents deleted: " + str(result.deleted_count))
+
+
+client.close()
+
+
