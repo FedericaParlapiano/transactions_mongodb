@@ -39,5 +39,6 @@ try:
 
 except Exception as e:
     print(f"Errore durante il commit della transazione: {e}")
+    session1.abort_transaction()
 
 session1.end_session()
