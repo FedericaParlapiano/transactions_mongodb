@@ -7,7 +7,6 @@ client2 = MongoClient('mongodb+srv://federica:federica@cluster1.1mnlttb.mongodb.
 session2 = client2.start_session()
 session2.start_transaction(
     read_concern=ReadConcern("local"),
-    write_concern=WriteConcern("majority"),
     read_preference=ReadPreference.PRIMARY
 )
 

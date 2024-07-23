@@ -24,7 +24,7 @@ print("Prezzo iniziale: ", initial_price);
 time.sleep(3)
 
 try:
-    myCollection.update_one({'_id': id}, {'$inc': {'prezzo': -10}}, session=session1)
+    myCollection.update_one({'_id': id}, {"$set": { "prezzo": round(float(initial_price-10), 2) }}, session=session1)
 
     modified_doc = myCollection.find_one({'_id': id}, session=session1);
     final_price = modified_doc.get("prezzo");
