@@ -7,6 +7,8 @@ client = MongoClient('mongodb+srv://federica:federica@cluster1.1mnlttb.mongodb.n
 db = client['negozio_abbigliamento']
 collezione = db['capi_abbigliamento']
 
+collezione.drop()
+
 documenti = [
     {"_id": 1, "nome": "Maglietta", "prezzo": 19.99, "colore": "rosso", "taglia": "M", "quantità": 50},
     {"_id": 2, "nome": "Jeans", "prezzo": 49.99, "colore": "blu", "taglia": "L", "quantità": 30},
@@ -27,6 +29,8 @@ print("Documenti inseriti con successo")
 
 db = client['negozio_abbigliamento']
 collezione_scontrini = db['scontrini']
+
+collezione_scontrini.drop()
 
 scontrini = [
     {
