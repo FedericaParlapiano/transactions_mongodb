@@ -34,7 +34,7 @@ except Exception as e:
 
 try:
     session2.commit_transaction()
-    print("Transazione andata a buon fine.");
+    print("Transazione andata a buon fine.")
 except Exception as e:
     print(f"Errore durante il commit della transazione: {e}")
     session2.abort_transaction()
