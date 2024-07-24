@@ -60,7 +60,7 @@ try:
         time.sleep(3)
     else:
         session1.abort_transaction()
-        print("T1 - Abort: il prezzo del completo deve superare quello dell'abito di almeno 20 euro")
+        print("T1 - Abort: il prezzo del completo deve superare quello dell'abito")
         print("")
 finally:
     session1.end_session()
