@@ -13,13 +13,14 @@ documenti = [
     {"_id": 1, "nome": "Maglietta", "prezzo": 19.99, "colore": "rosso", "taglia": "M", "quantita'": 50},
     {"_id": 2, "nome": "Jeans", "prezzo": 49.99, "colore": "blu", "taglia": "L", "quantita'": 30},
     {"_id": 3, "nome": "Felpa", "prezzo": 39.99, "colore": "grigio", "taglia": "XL", "quantita'": 20},
-    {"_id": 4, "nome": "Giacca", "prezzo": 89.99, "colore": "nero", "taglia": "M", "quantita'": 15},
+    {"_id": 4, "nome": "Giacca", "prezzo": 74.99, "colore": "beige", "taglia": "M", "quantita'": 15},
     {"_id": 5, "nome": "Gonna", "prezzo": 29.99, "colore": "verde", "taglia": "S", "quantita'": 40},
-    {"_id": 6, "nome": "Pantaloni corti", "prezzo": 49.99, "colore": "beige", "taglia": "M", "quantita'": 60},
-    {"_id": 7, "nome": "Camicia", "prezzo": 34.99, "colore": "bianco", "taglia": "L", "quantita'": 25},
-    {"_id": 8, "nome": "Abito", "prezzo": 99.99, "colore": "rosso", "taglia": "S", "quantita'": 10},
-    {"_id": 9, "nome": "Cappotto", "prezzo": 129.99, "colore": "marrone", "taglia": "XL", "quantita'": 5},
-    {"_id": 10, "nome": "Maglione", "prezzo": 59.99, "colore": "blu", "taglia": "M", "quantita'": 35}
+    {"_id": 6, "nome": "Pantaloni corti", "prezzo": 24.99, "colore": "rosso", "taglia": "M", "quantita'": 60},
+    {"_id": 7, "nome": "Pantaloni", "prezzo": 49.99, "colore": "beige", "taglia": "M", "quantita'": 60},
+    {"_id": 8, "nome": "Camicia", "prezzo": 34.99, "colore": "bianco", "taglia": "L", "quantita'": 25},
+    {"_id": 9, "nome": "Abito", "prezzo": 99.99, "colore": "beige", "taglia": "S", "quantita'": 10},
+    {"_id": 10, "nome": "Cappotto", "prezzo": 129.99, "colore": "marrone", "taglia": "XL", "quantita'": 5},
+    {"_id": 11, "nome": "Maglione", "prezzo": 59.99, "colore": "blu", "taglia": "M", "quantita'": 35}
 ]
 
 collezione.insert_many(documenti)
@@ -125,6 +126,7 @@ scontrini = [
     }
 ]
 
+# Inserimento dei documenti nella collezione
 collezione_scontrini.insert_many(scontrini)
 
 print("Scontrini inseriti con successo")
