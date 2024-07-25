@@ -8,7 +8,7 @@ client = MongoClient('mongodb+srv://federica:federica@cluster1.1mnlttb.mongodb.n
 # Inizio della sessione con transazione
 session1 = client.start_session()
 session1.start_transaction(
-    read_concern=ReadConcern("snapshot"),
+    read_concern=ReadConcern("local"),
     write_concern=WriteConcern("majority"),
 )
 
@@ -17,7 +17,7 @@ try:
     db = client['negozio_abbigliamento']
     myCollection = db['capi_abbigliamento']
 
-    # myCollection.update_one({'nome': 'Giacca'}, {'$set': {'prezzo': 89.99}}, session=session1)
+    # capi_abbigliamento.update_one({'nome': 'Giacca'}, {'$set': {'prezzo': 89.99}}, session=session2)
 
     # Lettura dei prezzi degli articoli
     abito = myCollection.find_one({'nome': 'Abito'}, session=session1)
@@ -33,7 +33,7 @@ try:
     print("T1 - Prezzo giacca prima dell'update: ", prezzo_giacca)
     print("T1 - Prezzo pantaloni prima dell'update: ", prezzo_pantaloni)
     print("T1 - Prezzo completo giacca e pantaloni prima dell'update: ", round(float(prezzo_completo), 2))
-    print("T1 - Prezzo abito prima dell'update: ", prezzo_abito)
+    print("T1 - Prezzo cappotto prima dell'update: ", prezzo_abito)
     print("")
 
     # Verifica della condizione e aggiornamento del prezzo
@@ -52,7 +52,7 @@ try:
         print("T1 - Prezzo giacca dopo l'update: ", prezzo_giacca)
         print("T1 - Prezzo pantaloni dopo l'update: ", prezzo_pantaloni)
         print("T1 - Prezzo completo giacca e pantaloni dopo l'update: ", round(float(prezzo_completo), 2))
-        print("T1 - Prezzo abito dopo l'update: ", prezzo_abito)
+        print("T1 - Prezzo cappotto dopo l'update: ", prezzo_abito)
         time.sleep(3)
         session1.commit_transaction()
         print("T1 - Commit")
@@ -60,7 +60,7 @@ try:
         time.sleep(3)
     else:
         session1.abort_transaction()
-        print("T1 - Abort: il prezzo del completo deve superare quello dell'abito")
+        print("T1 - Abort: il prezzo del completo deve superare quello dell'cappotto")
         print("")
 finally:
     session1.end_session()
@@ -75,7 +75,7 @@ prezzo_abito = abito.get("prezzo")
 
 print("T1 - Prezzo giacca dopo il commit: ", round(float(prezzo_giacca), 2))
 print("T1 - Prezzo pantaloni dopo il commit: ", round(float(prezzo_pantaloni), 2))
-print("T1 - Prezzo abito dopo il commit: ", round(float(prezzo_abito), 2))
+print("T1 - Prezzo cappotto dopo il commit: ", round(float(prezzo_abito), 2))
 print("T1 - Prezzo completo giacca e pantaloni dopo il commit: ", round(float(prezzo_completo), 2))
 
 if prezzo_completo >= prezzo_abito:
