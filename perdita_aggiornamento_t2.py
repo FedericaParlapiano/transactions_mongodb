@@ -26,18 +26,18 @@ try:
 
     modified_doc = myCollection.find_one({'_id': id}, session=session2);
     final_price = modified_doc.get("prezzo");
-    print("Documento modificato: ", modified_doc)
+    print("\n\nDocumento modificato: ", modified_doc)
     print("Prezzo finale: ", final_price);
 
-except Exception as e:
-    print(f"Errore durante l'aggiornamento: {e}")
+    try:
+        session2.commit_transaction()
+        print("\n\nTransazione andata a buon fine.\n")
+    except Exception as e:
+        print(f"\n\nErrore durante il commit della transazione: {e.args[0]}")
+        session2.abort_transaction()
 
-try:
-    session2.commit_transaction()
-    print("Transazione andata a buon fine.")
 except Exception as e:
-    print(f"Errore durante il commit della transazione: {e}")
-    session2.abort_transaction()
-
+    print(f"\n\nErrore durante l'aggiornamento: {e.args[0]}")
+    print("\n\n Transazione abortita. \n")
 
 session2.end_session()
