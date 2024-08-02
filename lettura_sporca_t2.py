@@ -14,14 +14,10 @@ db = client2['negozio_abbigliamento']
 myCollection = db['capi_abbigliamento']
 id = 1
 
-
-for i in range(0,5):
-
-    doc = myCollection.find_one({'_id': id}, session=session2)
-    print(doc)
-    price = doc.get("prezzo")
-    print("Prezzo: ", price, "\n")
-
+doc = myCollection.find_one({'_id': id}, session=session2)
+print(doc)
+price = doc.get("prezzo")
+print("Prezzo: ", price, "\n")
 
 session2.commit_transaction()
 session2.end_session()
