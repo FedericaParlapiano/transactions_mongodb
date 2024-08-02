@@ -1,9 +1,10 @@
+from bson import Decimal128
 from pymongo import MongoClient, WriteConcern
 from pymongo.read_concern import ReadConcern
 import time
 
 
-client1 = MongoClient('mongodb+srv://federica:federica@cluster1.1mnlttb.mongodb.net/?appName=mongosh+2.2.10')
+client1 = MongoClient("mongodb+srv://arianna:arianna@cluster0.o61ssco.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 
 session1 = client1.start_session()
 session1.start_transaction(
@@ -16,18 +17,18 @@ db = client1['negozio_abbigliamento']
 myCollection = db['capi_abbigliamento']
 id = 1
 
-doc = myCollection.find_one({'_id': id}, session=session1);
+doc = myCollection.find_one({'capoId': id}, session=session1);
 print("Documento da modificare: ", doc)
-initial_price = doc.get("prezzo");
+initial_price = doc.get("prezzo").to_decimal();
 print("Prezzo iniziale: ", initial_price);
 
 time.sleep(3)
 
 try:
-    myCollection.update_one({'_id': id}, {"$set": { "prezzo": round(float(initial_price-10), 2) }}, session=session1)
+    myCollection.update_one({'capoId': id}, {"$set": { "prezzo": Decimal128(initial_price-10)}}, session=session1)
 
-    modified_doc = myCollection.find_one({'_id': id}, session=session1);
-    final_price = modified_doc.get("prezzo");
+    modified_doc = myCollection.find_one({'capoId': id}, session=session1);
+    final_price = modified_doc.get("prezzo").to_decimal();
     print("\n\nDocumento modificato: ", modified_doc)
     print("Prezzo finale: ", final_price);
 
