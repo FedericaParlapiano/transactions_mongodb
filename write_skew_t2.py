@@ -17,7 +17,7 @@ try:
     db = client['negozio_abbigliamento']
     myCollection = db['capi_abbigliamento']
 
-    # myCollection.update_one({'nome': 'Pantaloni corti'}, {'$set': {'prezzo': 49.99}}, session=session2)
+    # capi_abbigliamento.update_one({'nome': 'Pantaloni corti'}, {'$set': {'prezzo': 49.99}}, session=session2)
 
     # Lettura dei prezzi degli articoli
     abito = myCollection.find_one({'nome': 'Abito'}, session=session2)
@@ -33,7 +33,7 @@ try:
     print("T2 - Prezzo giacca prima dell'update: ", prezzo_giacca)
     print("T2 - Prezzo pantaloni prima dell'update: ", prezzo_pantaloni)
     print("T2 - Prezzo completo giacca e pantaloni: ", round(float(prezzo_completo), 2))
-    print("T2 - Prezzo abito: ", prezzo_abito)
+    print("T2 - Prezzo cappotto: ", prezzo_abito)
     print("")
 
     # Verifica della condizione e aggiornamento del prezzo
@@ -52,14 +52,14 @@ try:
         print("T2 - Prezzo giacca dopo l'update: ", prezzo_giacca)
         print("T2 - Prezzo pantaloni dopo l'update: ", prezzo_pantaloni)
         print("T2 - Prezzo completo giacca e pantaloni dopo l'update: ", round(float(prezzo_completo), 2))
-        print("T2 - Prezzo abito dopo l'update: ", prezzo_abito)
+        print("T2 - Prezzo cappotto dopo l'update: ", prezzo_abito)
         session2.commit_transaction()
         print("T2 - Commit")
         print("")
         time.sleep(3)
     else:
         session2.abort_transaction()
-        print("T2 - Abort: il prezzo del completo deve superare quello dell'abito")
+        print("T2 - Abort: il prezzo del completo deve superare quello dell'cappotto")
         print("")
 finally:
     session2.end_session()
@@ -74,7 +74,7 @@ prezzo_abito = abito.get("prezzo")
 
 print("T2 - Prezzo giacca dopo il commit: ", round(float(prezzo_giacca), 2))
 print("T2 - Prezzo pantaloni dopo il commit: ", round(float(prezzo_pantaloni), 2))
-print("T2 - Prezzo abito dopo il commit: ", round(float(prezzo_abito), 2))
+print("T2 - Prezzo cappotto dopo il commit: ", round(float(prezzo_abito), 2))
 print("T2 - Prezzo completo giacca e pantaloni dopo il commit: ", round(float(prezzo_completo), 2))
 
 if prezzo_completo >= prezzo_abito:
