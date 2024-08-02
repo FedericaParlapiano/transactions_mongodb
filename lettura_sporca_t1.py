@@ -1,43 +1,75 @@
+from bson import Decimal128
 from pymongo import MongoClient, WriteConcern
+from pymongo.errors import PyMongoError
 from pymongo.read_concern import ReadConcern
 from pymongo.read_preferences import ReadPreference
 
 import time
 
+connection_string = "mongodb+srv://arianna:arianna@cluster0.o61ssco.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+connection_string = "mongodb+srv://federica:federica@cluster1.1mnlttb.mongodb.net/?appName=mongosh+2.2.10"
 
-client1 = MongoClient('mongodb+srv://federica:federica@cluster1.1mnlttb.mongodb.net/?appName=mongosh+2.2.10')
-
-session1 = client1.start_session()
-session1.start_transaction(
-    read_concern=ReadConcern("local"),
-    write_concern=WriteConcern(1),
-    read_preference=ReadPreference.PRIMARY
-)
+client1 = MongoClient(connection_string)
 
 
-db = client1['negozio_abbigliamento']
-myCollection = db['capi_abbigliamento']
-id = 1
+def callback(session, capo_id=None, additional_price=0):
+    capiCollection = session.client.negozio_abbigliamento.capi_abbigliamento.with_options(
+        read_concern=ReadConcern("local"),
+        write_concern=WriteConcern(w=1, j=False)
+    )
+
+    doc = capiCollection.find_one(
+        {'capoId': capo_id},
+        {'_id': False},
+        session=session,
+    )
+    print("Documento da modificare: ", doc)
+    initial_price = doc.get("prezzo").to_decimal()
+    print("Prezzo iniziale: ", initial_price)
+
+    try:
+        capiCollection.update_one({'capoId': capo_id},
+                                {"$set": {"prezzo": Decimal128(initial_price + additional_price)}},
+                                session=session)
+
+        modified_doc = capiCollection.find_one(
+            {'capoId': capo_id},
+            {'_id': False},
+            session=session,
+        )
+        final_price = modified_doc.get("prezzo").to_decimal()
+        print("\nDocumento modificato: ", modified_doc)
+        print("Prezzo finale: ", final_price)
+
+        time.sleep(15)
+
+        session.abort_transaction()
+        print("\n\nTransazione abortita. \n")
+
+    except Exception as e:
+        print(f"\n\nErrore durante l'aggiornamento: {e.args[0]}")
+        session.abort_transaction()
+        print("\n\nTransazione abortita. \n")
+
+    return
 
 
-doc = myCollection.find_one({'_id': id}, session=session1);
-print("Documento da modificare: ", doc)
-initial_price = doc.get("prezzo");
-print("Prezzo iniziale: ", initial_price);
+def callback_wrapper(s):
+    callback(
+        session=s,
+        capo_id=1,
+        additional_price=5
+    )
 
-try:
-    myCollection.update_one({'_id': id}, {"$set": { "prezzo": round(float(initial_price-10), 2) }}, session=session1)
 
-    modified_doc = myCollection.find_one({'_id': id}, session=session1);
-    final_price = modified_doc.get("prezzo");
-    print("Documento modificato: ", modified_doc)
-    print("Prezzo finale: ", final_price);
-except Exception as e:
-    print(f"Errore durante l'aggiornamento: {e}")
+with client1.start_session() as session:
+    try:
+        session.with_transaction(
+            callback_wrapper,
+            read_concern=ReadConcern(level="local"),
+            write_concern=WriteConcern(w=1, j=False)
+        )
+    except PyMongoError as e:
+        print(f"Transazione fallita: {e.args[0]}")
 
-time.sleep(10)
-
-session1.abort_transaction()
-print("Transazione abortita.");
-
-session1.end_session()
+client1.close()

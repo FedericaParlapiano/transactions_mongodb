@@ -1,69 +1,86 @@
 from datetime import datetime
 
+from bson import Decimal128
 from pymongo import MongoClient, WriteConcern
+from pymongo.errors import PyMongoError
 from pymongo.read_concern import ReadConcern
 import time
 
-# Connessione al client MongoDB
-client = MongoClient('mongodb+srv://federica:federica@cluster1.1mnlttb.mongodb.net/?appName=mongosh+2.2.10')
+connection_string = "mongodb+srv://arianna:arianna@cluster0.o61ssco.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+connection_string = "mongodb+srv://federica:federica@cluster1.1mnlttb.mongodb.net/?appName=mongosh+2.2.10"
+client2 = MongoClient(connection_string)
 
-# Inizio della sessione con transazione
-session2 = client.start_session()
-session2.start_transaction(
-    read_concern=ReadConcern("local"),
-    write_concern=WriteConcern("majority"),
-)
 
-try:
-    # Selezione del database e della collezione
-    db = client['negozio_abbigliamento']
-    capi_abbigliamento = db['capi_abbigliamento']
-    scontrini = db['scontrini']
+def callback(session, capi, taglie):
+    capiCollection = session.client.negozio_abbigliamento.capi_abbigliamento.with_options(
+        write_concern=WriteConcern(w=1, j=False)
+    )
+    scontriniCollection = session.client.negozio_abbigliamento.scontrini.with_options(
+        write_concern=WriteConcern(w=1, j=False)
+    )
 
-    # Lettura dei prezzi degli articoli
-    cappotto = capi_abbigliamento.find_one({'nome': 'Cappotto'}, session=session2)
-    jeans = capi_abbigliamento.find_one({'nome': 'Jeans'}, session=session2)
-    prezzo_cappotto = cappotto.get("prezzo")
-    prezzo_jeans = jeans.get("prezzo")
-
-    print("T2 - Tentativo di acquisto di " + jeans.get("nome") + " con ID " + str(jeans.get("_id")))
-    print(jeans)
-    print("T2 - Tentativo di acquisto di " + cappotto.get("nome") + " con ID " + str(cappotto.get("_id")))
-    print(cappotto)
+    articoli = []
+    totale_complessivo = 0
 
     print("")
+    for capo, taglia in zip(capi, taglie):
+        articolo = capiCollection.find_one({'nome': capo}, {'_id': False}, session=session)
+        prezzo_articolo = articolo.get("prezzo").to_decimal()
 
-    time.sleep(7)
+        print(f"Tentativo di acquisto di {articolo.get('nome')} (taglia: {taglia}) con ID {articolo.get('capoId')}")
+        print(articolo)
 
-    capi_abbigliamento.update_one({'nome': 'Jeans'}, {'$inc': {'quantita': - 1}}, session=session2)
-    jeans = capi_abbigliamento.find_one({'nome': 'Jeans'}, session=session2)
-    print(jeans)
-    capi_abbigliamento.update_one({'nome': 'Cappotto'}, {'$inc': {'quantita': - 1}}, session=session2)
-    cappotto = capi_abbigliamento.find_one({'nome': 'Cappotto'}, session=session2)
-    print(cappotto)
+        time.sleep(1)
 
+        capiCollection.update_one({'nome': capo}, {'$inc': {f'disponibilita.{taglia}': -1}}, session=session)
+        articolo_aggiornato = capiCollection.find_one({'nome': capo}, {'_id': False},  session=session)
+        print(f"Aggiornamento quantità: {articolo_aggiornato}\n")
+
+        articoli.append({"nome": capo, "quantita": 1, "prezzo_totale": Decimal128(str(prezzo_articolo)), "taglia": taglia})
+        totale_complessivo += prezzo_articolo
+
+    totale_complessivo = Decimal128(str(totale_complessivo))
 
     nuovo_scontrino = {
-        "data": datetime.strptime("2024-07-21", "%Y-%m-%d"),
-        "articoli": [
-            {"nome": "Cappotto", "quantita": 1, "prezzo_totale": prezzo_cappotto},
-            {"nome": "Jeans", "quantita": 1, "prezzo_totale": prezzo_jeans}
-        ],
-        "totale_complessivo": prezzo_cappotto+prezzo_jeans
+        "data": datetime.strptime(str(datetime.now().date()), "%Y-%m-%d"),
+        "articoli": articoli,
+        "totale_complessivo": totale_complessivo
     }
-    scontrini.insert_one(nuovo_scontrino)
 
-    print("T2 - Acquisto terminato")
+    try:
+        scontriniCollection.insert_one(nuovo_scontrino)
+        print("Acquisto terminato.")
+        print(f"Scontrino: {nuovo_scontrino}\n")
+        time.sleep(4)
+        session.commit_transaction()
+        print("Transazione andata a buon fine.\n")
+        time.sleep(3)
 
-    print("")
+    except Exception as e:
+        print(f"\n\nErrore durante la transazione: {e.args[0]}")
+        session.abort_transaction()
+        print("\n\nTransazione abortita. \n")
+    return
 
-    time.sleep(4)
-    session2.commit_transaction()
-    print("T2 - Commit")
-    print("")
-    time.sleep(3)
-except Exception as e:
-    print(f"Errore durante l'aggiornamento: {e}")
-    print("T2 - Abort")
-finally:
-    session2.end_session()
+
+def callback_wrapper(s):
+    capi = ["Cappotto", "Jeans"]
+    taglie = ["M", "L"]
+    callback(
+        session=s,
+        capi=capi,
+        taglie=taglie
+    )
+
+
+with client2.start_session() as session:
+    try:
+        session.with_transaction(
+            callback_wrapper,
+            read_concern=ReadConcern(level="local"),
+            write_concern=WriteConcern(w=1, j=False)
+        )
+    except PyMongoError as e:
+        print(f"Transazione fallita: {e.args[0]}")
+
+client2.close()

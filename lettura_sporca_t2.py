@@ -1,27 +1,53 @@
 from pymongo import MongoClient, WriteConcern
+from pymongo.errors import PyMongoError
 from pymongo.read_concern import ReadConcern
-from pymongo.read_preferences import ReadPreference
 
-client2 = MongoClient('mongodb+srv://federica:federica@cluster1.1mnlttb.mongodb.net/?appName=mongosh+2.2.10')
+connection_string = "mongodb+srv://arianna:arianna@cluster0.o61ssco.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+connection_string = "mongodb+srv://federica:federica@cluster1.1mnlttb.mongodb.net/?appName=mongosh+2.2.10"
 
-session2 = client2.start_session()
-session2.start_transaction(
-    read_concern=ReadConcern("local"),
-    read_preference=ReadPreference.PRIMARY
-)
-
-db = client2['negozio_abbigliamento']
-myCollection = db['capi_abbigliamento']
-id = 1
+client1 = MongoClient(connection_string)
 
 
-for i in range(0,5):
+def callback(session, capo_id=None):
+    capiCollection = session.client.negozio_abbigliamento.capi_abbigliamento.with_options(
+        read_concern=ReadConcern("local"),
+        write_concern=WriteConcern(w=1, j=False)
+    )
 
-    doc = myCollection.find_one({'_id': id}, session=session2)
+    doc = capiCollection.find_one(
+        {'capoId': capo_id},
+        {'_id': False},
+        session=session,
+    )
     print(doc)
-    price = doc.get("prezzo")
-    print("Prezzo: ", price, "\n")
+    initial_price = doc.get("prezzo").to_decimal()
+    print("Prezzo del capo: ", initial_price)
+
+    try:
+        session.commit_transaction()
+        print("\n\nTransazione andata a buon fine.\n")
+    except Exception as e:
+        print(f"\n\nErrore durante il commit della transazione: {e.args[0]}")
+        session.abort_transaction()
+        return
 
 
-session2.commit_transaction()
-session2.end_session()
+
+def callback_wrapper(s):
+    callback(
+        session=s,
+        capo_id=1,
+    )
+
+
+with client1.start_session() as session:
+    try:
+        session.with_transaction(
+            callback_wrapper,
+            read_concern=ReadConcern(level="local"),
+            write_concern=WriteConcern(w=1, j=False)
+        )
+    except PyMongoError as e:
+        print(f"Transazione fallita: {e.args[0]}")
+
+client1.close()
