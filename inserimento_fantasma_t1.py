@@ -29,7 +29,7 @@ def callback(session, colore):
         session.commit_transaction()
 
     except Exception as e:
-        print(f"Errore durante il commit della transazione: {e}")
+        print(f"Errore durante il commit della transazione: {e.args[0]}")
         session.abort_transaction()
 
 def callback_wrapper(s):
