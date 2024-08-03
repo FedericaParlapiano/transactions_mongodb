@@ -1,8 +1,7 @@
 import pprint
-
-from pymongo import MongoClient, WriteConcern
 import time
 
+from pymongo import MongoClient, WriteConcern
 from pymongo.errors import PyMongoError
 from pymongo.read_concern import ReadConcern
 
@@ -17,7 +16,7 @@ def callback(session, colore):
 
     for i in range(0,2):
         print(f"Articoli di colore {colore}.")
-        cursor = capiCollection.find({'colore': colore}, session=session)
+        cursor = capiCollection.find({'colore': colore}, {'_id': False}, session=session)
         num_docs = 0
         for document in cursor:
             num_docs += 1
@@ -34,10 +33,9 @@ def callback(session, colore):
         session.abort_transaction()
 
 def callback_wrapper(s):
-    colore = "rosso"
     callback(
         session=s,
-        colore=colore
+        colore="rosso"
     )
 
 

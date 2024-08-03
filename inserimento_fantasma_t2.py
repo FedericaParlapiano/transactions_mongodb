@@ -15,7 +15,7 @@ def callback(session, colore):
     )
 
 
-    cursor = capiCollection.find({'colore': colore}, session=session);
+    cursor = capiCollection.find({'colore': colore}, {'_id': False}, session=session)
     print(f"Articoli di colore {colore}.")
     num_docs = 0
     for document in cursor:
@@ -28,7 +28,7 @@ def callback(session, colore):
         print(f"Inserimento di un nuovo articolo di colore {colore}.\n")
 
     except Exception as e:
-        print(f"Errore durante l'inserimento dell'articolo: {e}")
+        print(f"Errore durante l'inserimento dell'articolo: {e.args[0]}")
 
     try:
         session.commit_transaction()
@@ -44,8 +44,8 @@ def callback(session, colore):
         print(f"Numero dei capi di colore {colore}: {str(num_docs)}.")
 
     except Exception as e:
-        print(f"Errore durante il commit della transazione: {e}")
-        capiCollection.abort_transaction()
+        print(f"Errore durante il commit della transazione: {e.args[0]}")
+        session.abort_transaction()
 
 def callback_wrapper(s):
     colore = "rosso"
