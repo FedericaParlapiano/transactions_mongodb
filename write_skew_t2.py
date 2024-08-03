@@ -24,10 +24,10 @@ def callback(session):
 
         prezzo_completo = prezzo_giacca + prezzo_pantaloni
 
-        print("T2 - Prezzo giacca prima dell'update: ", prezzo_giacca)
-        print("T2 - Prezzo pantaloni prima dell'update: ", prezzo_pantaloni)
-        print("T2 - Prezzo completo giacca e pantaloni: ", prezzo_completo)
-        print("T2 - Prezzo cappotto: ", prezzo_abito)
+        print("Prezzo giacca prima dell'update: ", prezzo_giacca)
+        print("Prezzo pantaloni prima dell'update: ", prezzo_pantaloni)
+        print("Prezzo completo giacca e pantaloni: ", prezzo_completo)
+        print("Prezzo cappotto: ", prezzo_abito)
         print("")
 
         if prezzo_completo >= prezzo_abito + 20:
@@ -42,17 +42,17 @@ def callback(session):
             abito = capiCollection.find_one({'nome': 'Abito'}, session=session)
             prezzo_abito = abito.get("prezzo").to_decimal()
 
-            print("T2 - Prezzo giacca dopo l'update: ", prezzo_giacca)
-            print("T2 - Prezzo pantaloni dopo l'update: ", prezzo_pantaloni)
-            print("T2 - Prezzo completo giacca e pantaloni dopo l'update: ", prezzo_completo)
-            print("T2 - Prezzo cappotto dopo l'update: ", prezzo_abito)
+            print("Prezzo giacca dopo l'update: ", prezzo_giacca)
+            print("Prezzo pantaloni dopo l'update: ", prezzo_pantaloni)
+            print("Prezzo completo giacca e pantaloni dopo l'update: ", prezzo_completo)
+            print("Prezzo cappotto dopo l'update: ", prezzo_abito)
             session.commit_transaction()
-            print("T2 - Commit")
+            print("Commit")
             print("")
             time.sleep(3)
         else:
             session.abort_transaction()
-            print("T2 - Abort: il prezzo del completo deve superare quello dell'cappotto")
+            print("Abort: il prezzo del completo deve superare quello dell'cappotto")
             print("")
     finally:
         session.end_session()
@@ -65,10 +65,10 @@ def callback(session):
     abito = capiCollection.find_one({'nome': 'Abito'})
     prezzo_abito = abito.get("prezzo").to_decimal()
 
-    print("T2 - Prezzo giacca dopo il commit: ", round(float(prezzo_giacca), 2))
-    print("T2 - Prezzo pantaloni dopo il commit: ", round(float(prezzo_pantaloni), 2))
-    print("T2 - Prezzo cappotto dopo il commit: ", round(float(prezzo_abito), 2))
-    print("T2 - Prezzo completo giacca e pantaloni dopo il commit: ", round(float(prezzo_completo), 2))
+    print("Prezzo giacca dopo il commit: ", round(float(prezzo_giacca), 2))
+    print("Prezzo pantaloni dopo il commit: ", round(float(prezzo_pantaloni), 2))
+    print("Prezzo cappotto dopo il commit: ", round(float(prezzo_abito), 2))
+    print("Prezzo completo giacca e pantaloni dopo il commit: ", round(float(prezzo_completo), 2))
 
     if prezzo_completo >= prezzo_abito:
         print("Il vincolo è rispettato")
