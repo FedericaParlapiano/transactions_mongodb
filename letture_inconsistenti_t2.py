@@ -53,7 +53,7 @@ def callback(session, capo_id=None, additional_price=0):
 
     except Exception as e:
         print(f"\n\nErrore durante l'aggiornamento: {e.args[0]}")
-        print("\n\nTransazione abortita. \n")
+        print("\nTransazione abortita. \n")
         session.abort_transaction()
         return
 
