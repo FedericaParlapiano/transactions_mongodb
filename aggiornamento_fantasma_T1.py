@@ -10,31 +10,31 @@ client = MongoClient(connection_string)
 
 def callback(session):
     capiCollection = session.client.negozio_abbigliamento.capi_abbigliamento.with_options(
+        read_concern=ReadConcern(level="local"),
         write_concern=WriteConcern(w=1, j=False)
     )
 
-
     try:
 
-        giacca = capiCollection.find_one({'nome': 'Giacca'}, session=session)
+        giacca = capiCollection.find_one({'nome': 'Giacca'}, {'_id':False}, session=session)
         prezzo_giacca = giacca.get("prezzo").to_decimal()
 
         print("T1 - Prezzo giacca (prima della modifica di T2): ", prezzo_giacca)
-        print("\n\n\n")
+        print("\n\n")
 
-        time.sleep(7)
+        time.sleep(6)
 
-        abito = capiCollection.find_one({'nome': 'Abito'}, session=session)
+        abito = capiCollection.find_one({'nome': 'Abito'}, {'_id':False}, session=session)
         prezzo_abito = abito.get("prezzo").to_decimal()
 
-        pantaloni = capiCollection.find_one({'nome': 'Pantaloni'}, session=session)
+        pantaloni = capiCollection.find_one({'nome': 'Pantaloni'}, {'_id':False}, session=session)
         prezzo_pantaloni = pantaloni.get("prezzo").to_decimal()
 
         prezzo_completo = prezzo_giacca + prezzo_pantaloni
 
         print("T1 - Prezzo pantaloni (dopo le modifiche di T2): ", prezzo_pantaloni)
-        print("T1 - Prezzo completo giacca e pantaloni (dopo le modifiche di T2): ", Decimal128(prezzo_completo))
-        print("T1 - Prezzo cappotto: ", prezzo_abito)
+        print("\nT1 - Prezzo completo giacca e pantaloni (dopo le modifiche di T2): ", Decimal128(prezzo_completo))
+        print("T1 - Prezzo abito: ", prezzo_abito)
         print("")
 
         if prezzo_completo >= prezzo_abito:
@@ -42,6 +42,11 @@ def callback(session):
         else:
             session.abort_transaction()
             print("T1 - Vincolo non soddisfatto")
+            print("Transazione abortita.")
+
+    except Exception as e:
+        print(f"Errore durante la transazione: {e.args[0]}")
+        session.abort_transaction()
 
     finally:
         session.end_session()
