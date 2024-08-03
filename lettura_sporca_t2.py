@@ -4,8 +4,7 @@ from pymongo.read_concern import ReadConcern
 
 connection_string = "mongodb+srv://arianna:arianna@cluster0.o61ssco.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 connection_string = "mongodb+srv://federica:federica@cluster1.1mnlttb.mongodb.net/?appName=mongosh+2.2.10"
-
-client1 = MongoClient(connection_string)
+client2 = MongoClient(connection_string)
 
 
 def callback(session, capo_id=None):
@@ -40,7 +39,7 @@ def callback_wrapper(s):
     )
 
 
-with client1.start_session() as session:
+with client2.start_session() as session:
     try:
         session.with_transaction(
             callback_wrapper,
@@ -50,4 +49,4 @@ with client1.start_session() as session:
     except PyMongoError as e:
         print(f"Transazione fallita: {e.args[0]}")
 
-client1.close()
+client2.close()
