@@ -49,13 +49,16 @@ def callback(session):
             print("Prezzo cappotto dopo l'update: ", prezzo_abito)
             time.sleep(3)
             session.commit_transaction()
-            print("Commit")
-            print("")
+            print("\nTransazione andata a buon fine.\n")
             time.sleep(3)
         else:
             session.abort_transaction()
-            print("Abort: il prezzo del completo deve superare quello dell'cappotto")
-            print("")
+            print("Abort: il prezzo del completo deve superare quello dell'abito.\n")
+            return
+    except Exception as e:
+        print(f"Errore durante la transazione: {e.args[0]}")
+        session.abort_transaction()
+        return
     finally:
         session.end_session()
 

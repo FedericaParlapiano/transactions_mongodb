@@ -14,32 +14,32 @@ def callback(session):
     )
 
     try:
-        abito = capiCollection.find_one({'nome': 'Abito'}, session=session)
+        abito = capiCollection.find_one({'nome': 'Abito'}, {'_id':False}, session=session)
         prezzo_abito = abito.get("prezzo").to_decimal()
 
-        giacca = capiCollection.find_one({'nome': 'Giacca'}, session=session)
+        giacca = capiCollection.find_one({'nome': 'Giacca'}, {'_id':False}, session=session)
         prezzo_giacca = giacca.get("prezzo").to_decimal()
-        pantaloni = capiCollection.find_one({'nome': 'Pantaloni'}, session=session)
+        pantaloni = capiCollection.find_one({'nome': 'Pantaloni'}, {'_id':False}, session=session)
         prezzo_pantaloni = pantaloni.get("prezzo").to_decimal()
 
         prezzo_completo = prezzo_giacca + prezzo_pantaloni
 
         print("Prezzo giacca prima dell'update: ", prezzo_giacca)
         print("Prezzo pantaloni prima dell'update: ", prezzo_pantaloni)
-        print("Prezzo completo giacca e pantaloni: ", prezzo_completo)
-        print("Prezzo cappotto: ", prezzo_abito)
+        print("Prezzo completo giacca e pantaloni prima dell'update: ", prezzo_completo)
+        print("Prezzo abito: ", prezzo_abito)
         print("")
 
         if prezzo_completo >= prezzo_abito + 20:
             capiCollection.update_one({'nome': 'Pantaloni'}, {'$set': {'prezzo': Decimal128(str(prezzo_pantaloni-20))}}, session=session)
 
-            pantaloni = capiCollection.find_one({'nome': 'Pantaloni'}, session=session)
+            pantaloni = capiCollection.find_one({'nome': 'Pantaloni'}, {'_id':False}, session=session)
             prezzo_pantaloni = pantaloni.get("prezzo").to_decimal()
-            giacca = capiCollection.find_one({'nome': 'Giacca'}, session=session)
+            giacca = capiCollection.find_one({'nome': 'Giacca'}, {'_id':False}, session=session)
             prezzo_giacca = giacca.get("prezzo").to_decimal()
             prezzo_completo = prezzo_giacca + prezzo_pantaloni
 
-            abito = capiCollection.find_one({'nome': 'Abito'}, session=session)
+            abito = capiCollection.find_one({'nome': 'Abito'}, {'_id':False}, session=session)
             prezzo_abito = abito.get("prezzo").to_decimal()
 
             print("Prezzo giacca dopo l'update: ", prezzo_giacca)
@@ -47,22 +47,25 @@ def callback(session):
             print("Prezzo completo giacca e pantaloni dopo l'update: ", prezzo_completo)
             print("Prezzo cappotto dopo l'update: ", prezzo_abito)
             session.commit_transaction()
-            print("Commit")
-            print("")
+            print("\nTransazione andata a buon fine.\n")
             time.sleep(3)
         else:
             session.abort_transaction()
-            print("Abort: il prezzo del completo deve superare quello dell'cappotto")
-            print("")
+            print("Abort: il prezzo del completo deve superare quello dell'abito.\n")
+            return
+    except Exception as e:
+        print(f"Errore durante la transazione: {e.args[0]}")
+        session.abort_transaction()
+        return
     finally:
         session.end_session()
 
-    giacca = capiCollection.find_one({'nome': 'Giacca'})
+    giacca = capiCollection.find_one({'nome': 'Giacca'}, {'_id':False})
     prezzo_giacca = giacca.get("prezzo").to_decimal()
-    pantaloni = capiCollection.find_one({'nome': 'Pantaloni'})
+    pantaloni = capiCollection.find_one({'nome': 'Pantaloni'}, {'_id':False})
     prezzo_pantaloni = pantaloni.get("prezzo").to_decimal()
     prezzo_completo = prezzo_giacca + prezzo_pantaloni
-    abito = capiCollection.find_one({'nome': 'Abito'})
+    abito = capiCollection.find_one({'nome': 'Abito'}, {'_id':False})
     prezzo_abito = abito.get("prezzo").to_decimal()
 
     print("Prezzo giacca dopo il commit: ", round(float(prezzo_giacca), 2))
