@@ -1,64 +1,58 @@
 import pprint
 
-from bson import ObjectId
+from bson import ObjectId, Decimal128
 from pymongo import MongoClient
 
 # connect to MongoDB cluster with MongoClient
 # connection_string = "mongodb+srv://federica:federica@cluster1.1mnlttb.mongodb.net/?appName=mongosh+2.2.10"
 connection_string = "mongodb+srv://arianna:arianna@cluster0.o61ssco.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+connection_string = "mongodb+srv://federica:federica@cluster1.1mnlttb.mongodb.net/?appName=mongosh+2.2.10"
 client = MongoClient(connection_string)
 
-# get reference to database
-db = client.sample_analytics
+db = client.negozio_abbigliamento
 
-# get reference to collection
-accounts_collection = db.accounts
-customers_collection = db.customers
-transactions_collection = db.transactions
+capi_abbigliamento = db.capi_abbigliamento
+scontrini = db.scontrini
 
-# INSERT DOCUMENT
-new_account = {
-    "account_id": 123456,
-    "limit": 10000,
-    "product": ["Brokerage", "Derivatives", "CurrencyService", "InvestmentFund", "InvestmentStock"]
-}
+nuovo_capo = {
+        "nome": "Collana",
+        "prezzo": Decimal128("29.99"),
+        "colore": "oro",
+        "disponibilita": {"S": 2, "M": 5, "L": 2}
+    }
 
-# inserts new_account document into the accounts collection
-result = accounts_collection.insert_one(new_account)
+result = capi_abbigliamento.insert_one(nuovo_capo)
 
 document_id = result.inserted_id
-print(f"_id of inserted document: {document_id}")
+print(f"_id del documento inserito: {document_id}")
 
 document_to_find = {"_id": ObjectId(document_id)}
-pprint.pprint(accounts_collection.find_one(document_to_find))
+pprint.pprint(capi_abbigliamento.find_one(document_to_find))
 
-# FIND DOCUMENT
-document_to_find = {"accounts": {"$in": [987709]}}
+document_to_find = {"_id": ObjectId(document_id)}
 
-cursor = customers_collection.find(document_to_find)
+cursor = capi_abbigliamento.find(document_to_find)
 
 num_docs = 0
 for document in cursor:
     num_docs += 1
     pprint.pprint(document)
     print()
-print("Number of documents found: " + str(num_docs))
+print("Numero di documenti trovati: " + str(num_docs))
 
-# UPDATE DOCUMENT
 document_to_update = {"_id": ObjectId(document_id)}
-pprint.pprint(accounts_collection.find_one(document_to_update))
+pprint.pprint(capi_abbigliamento.find_one(document_to_update))
 
-add_product = {"$push": {"product": "Inv"}}
-result = accounts_collection.update_one(document_to_update, add_product)
-print("Documents updated: " + str(result.modified_count))
+add_product = {"$inc": {"prezzo": Decimal128("10")}}
+result = capi_abbigliamento.update_one(document_to_update, add_product)
+print("Documenti aggiornati: " + str(result.modified_count))
 
-pprint.pprint(accounts_collection.find_one(document_to_update))
+pprint.pprint(capi_abbigliamento.find_one(document_to_update))
 
-# DELETE DOCUMENT
-documents_to_delete = {"account_id": 123456}
+documents_to_delete = {"nome": "Collana"}
 
-result = accounts_collection.delete_many(documents_to_delete)
-print("Documents deleted: " + str(result.deleted_count))
+result = capi_abbigliamento.delete_many(documents_to_delete)
+print("Documenti eliminati: " + str(result.deleted_count))
 
 
 client.close()
