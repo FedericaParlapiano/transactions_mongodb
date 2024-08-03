@@ -3,8 +3,6 @@ import pprint
 from bson import ObjectId, Decimal128
 from pymongo import MongoClient
 
-# connect to MongoDB cluster with MongoClient
-# connection_string = "mongodb+srv://federica:federica@cluster1.1mnlttb.mongodb.net/?appName=mongosh+2.2.10"
 connection_string = "mongodb+srv://arianna:arianna@cluster0.o61ssco.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 connection_string = "mongodb+srv://federica:federica@cluster1.1mnlttb.mongodb.net/?appName=mongosh+2.2.10"
 client = MongoClient(connection_string)

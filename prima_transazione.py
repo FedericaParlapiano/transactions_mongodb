@@ -1,34 +1,38 @@
 # Connect to MongoDB cluster with MongoClient
+from datetime import datetime
+
+from bson import Decimal128
 from pymongo import MongoClient
 
+connection_string = "mongodb+srv://arianna:arianna@cluster0.o61ssco.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 connection_string = "mongodb+srv://federica:federica@cluster1.1mnlttb.mongodb.net/?appName=mongosh+2.2.10"
-
 client = MongoClient(connection_string)
 
 # Step 1: Define the callback that specifies the sequence of operations to perform inside the transactions.
 def callback(session, account_id=None, new_account_id=None):
 
-    # Get reference to 'accounts' collection
-    accounts_collection = session.client.sample_analytics.accounts
+    capi_abbigliamento = session.client.negozio_abbigliamento.capi_abbigliamento
+    scontrini = session.client.negozio_abbigliamento.scontrini
 
-    # Get reference to 'transfers' collection
-    customers_collection = session.client.sample_analytics.customers
+    articolo = capi_abbigliamento.find_one({'nome': "Felpa"}, session=session)
+    prezzo_articolo = articolo.get("prezzo")
 
-
-    # Transaction operations
-    # Important: You must pass the session to each operation
-
-    # Update sender account: subtract transfer amount from balance and add transfer ID
-    accounts_collection.update_one(
-        {"account_id": account_id},
-        {"$set": {"account_id": new_account_id}},
+    capi_abbigliamento.update_one(
+        {"nome": "Felpa"},
+        {"$inc": {"disponibilita.L": -1}},
         session=session,
     )
 
-    # Update receiver account: add transfer amount to balance and add transfer ID
-    customers_collection.update_one(
-        {"accounts": {"$in": [account_id]}},
-        {"$set": {"accounts.$": new_account_id}},
+    scontrino_da_inserire = {
+        "data": datetime.strptime(str(datetime.now().date()), "%Y-%m-%d"),
+        "articoli": [
+            {"nome": "Felpa", "quantita": 1, "prezzo_totale": prezzo_articolo, "taglia": "L"},
+        ],
+        "totale_complessivo": prezzo_articolo
+    }
+
+    scontrini.insert_one(
+        scontrino_da_inserire,
         session=session,
     )
 
@@ -40,7 +44,7 @@ def callback(session, account_id=None, new_account_id=None):
 def callback_wrapper(s):
     callback(
         s,
-        987709,
+        "Felpa",
         121212
     )
 
