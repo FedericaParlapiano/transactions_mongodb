@@ -9,17 +9,19 @@ connection_string = "mongodb+srv://federica:federica@cluster1.1mnlttb.mongodb.ne
 client = MongoClient(connection_string)
 
 # Step 1: Define the callback that specifies the sequence of operations to perform inside the transactions.
-def callback(session, account_id=None, new_account_id=None):
+def callback(session, articolo=None, taglia=None):
 
     capi_abbigliamento = session.client.negozio_abbigliamento.capi_abbigliamento
     scontrini = session.client.negozio_abbigliamento.scontrini
 
-    articolo = capi_abbigliamento.find_one({'nome': "Felpa"}, session=session)
+    articolo = capi_abbigliamento.find_one({'nome': articolo}, session=session)
     prezzo_articolo = articolo.get("prezzo")
+
+    campo_da_aggiornare = f"disponibilita.{taglia}"
 
     capi_abbigliamento.update_one(
         {"nome": "Felpa"},
-        {"$inc": {"disponibilita.L": -1}},
+        {"$inc": {campo_da_aggiornare: -1}},
         session=session,
     )
 
@@ -45,7 +47,7 @@ def callback_wrapper(s):
     callback(
         s,
         "Felpa",
-        121212
+        "L"
     )
 
 
