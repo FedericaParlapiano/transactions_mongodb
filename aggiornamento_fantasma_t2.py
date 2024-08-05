@@ -58,7 +58,7 @@ def callback(session):
             print("")
         else:
             session.abort_transaction()
-            print("T2 - Abort: il prezzo del completo deve superare quello dell'cappotto")
+            print("T2 - Abort: il prezzo del completo deve superare quello dell'abito")
             print("")
 
     except Exception as e:
