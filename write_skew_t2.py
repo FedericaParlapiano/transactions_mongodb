@@ -68,10 +68,10 @@ def callback(session):
     abito = capiCollection.find_one({'nome': 'Abito'}, {'_id':False})
     prezzo_abito = abito.get("prezzo").to_decimal()
 
-    print("Prezzo giacca dopo il commit: ", round(float(prezzo_giacca), 2))
-    print("Prezzo pantaloni dopo il commit: ", round(float(prezzo_pantaloni), 2))
-    print("Prezzo cappotto dopo il commit: ", round(float(prezzo_abito), 2))
-    print("Prezzo completo giacca e pantaloni dopo il commit: ", round(float(prezzo_completo), 2))
+    print("Prezzo giacca dopo il commit: ", prezzo_giacca)
+    print("Prezzo pantaloni dopo il commit: ", prezzo_pantaloni)
+    print("Prezzo cappotto dopo il commit: ", prezzo_abito)
+    print("Prezzo completo giacca e pantaloni dopo il commit: ", prezzo_completo)
 
     if prezzo_completo >= prezzo_abito:
         print("Il vincolo è rispettato")
