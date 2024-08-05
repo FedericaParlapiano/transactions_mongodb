@@ -1,10 +1,10 @@
 from datetime import datetime
 from pymongo import MongoClient
 
-connection_string = "..."
+connection_string = "mongodb+srv://arianna:arianna@cluster0.o61ssco.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+connection_string = "mongodb+srv://federica:federica@cluster1.1mnlttb.mongodb.net/?appName=mongosh+2.2.10"
 client = MongoClient(connection_string)
 
-# Step 1: Define the callback that specifies the sequence of operations to perform inside the transactions.
 def callback(session, articolo=None, taglia=None):
 
     capi_abbigliamento = session.client.negozio_abbigliamento.capi_abbigliamento
@@ -38,7 +38,6 @@ def callback(session, articolo=None, taglia=None):
 
     return
 
-
 def callback_wrapper(s):
     callback(
         s,
@@ -46,10 +45,7 @@ def callback_wrapper(s):
         "L"
     )
 
-
-# Step 2: Start a client session
 with client.start_session() as session:
-    # Step 3: Use with_transaction to start a transaction, execute the callback, and commit (or cancel on error)
     session.with_transaction(callback_wrapper)
 
 
