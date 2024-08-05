@@ -7,6 +7,7 @@ connection_string = "mongodb+srv://federica:federica@cluster1.1mnlttb.mongodb.ne
 client = MongoClient(connection_string)
 
 db = client['negozio_abbigliamento']
+db = client['negozio_abbigliamento']
 
 counters = db['counters']
 counters.delete_many({})
@@ -64,7 +65,8 @@ documenti = [
         "disponibilita": {"S": 20, "M": 15, "L": 25, "XL": 10}
     },
     {
-        "nome": "Abito", "prezzo": Decimal128("99.99"), "colore": "beige", "disponibilita": {"S": 15, "M": 10, "L": 5}
+        "nome": "Abito", "prezzo": Decimal128("99.99"), "colore": "beige",
+        "disponibilita": {"S": 15, "M": 10, "L": 5}
     },
     {
         "nome": "Cappotto",
@@ -80,102 +82,119 @@ documenti = [
     }
 ]
 
-for doc in documenti:
-    collezione.insert_one(doc)
+collezione.insert_many(documents=documenti)
 
 print("Documenti inseriti con successo")
 
 
-db = client['negozio_abbigliamento']
 collezione_scontrini = db['scontrini']
-
 collezione_scontrini.delete_many({})
 
 scontrini = [
     {
         "data": datetime.strptime("2024-07-01", "%Y-%m-%d"),
         "articoli": [
-            {"nome": "Maglietta", "quantita": 2, "prezzo_totale": Decimal128("39.98"), "taglia": "M"},
-            {"nome": "Jeans", "quantita": 1, "prezzo_totale": Decimal128("49.99"), "taglia": "XS"}
+            {"nome": "Maglietta", "quantita": 2, "prezzo_totale":
+                Decimal128("39.98"), "taglia": "M"},
+            {"nome": "Jeans", "quantita": 1, "prezzo_totale":
+                Decimal128("49.99"), "taglia": "XS"}
         ],
         "totale_complessivo": Decimal128("89.97")
     },
     {
         "data": datetime.strptime("2024-07-02", "%Y-%m-%d"),
         "articoli": [
-            {"nome": "Felpa", "quantita": 1, "prezzo_totale": Decimal128("39.99"), "taglia": "L"},
-            {"nome": "Cappotto", "quantita": 1, "prezzo_totale": Decimal128("129.99"), "taglia": "XS"}
+            {"nome": "Felpa", "quantita": 1, "prezzo_totale":
+                Decimal128("39.99"), "taglia": "L"},
+            {"nome": "Cappotto", "quantita": 1, "prezzo_totale":
+                Decimal128("129.99"), "taglia": "XS"}
         ],
         "totale_complessivo": Decimal128("169.98")
     },
     {
         "data": datetime.strptime("2024-07-03", "%Y-%m-%d"),
         "articoli": [
-            {"nome": "Gonna", "quantita": 3, "prezzo_totale": Decimal128("89.97"), "taglia": "XS"},
-            {"nome": "Maglietta", "quantita": 1, "prezzo_totale": Decimal128("19.99"), "taglia": "XL"}
+            {"nome": "Gonna", "quantita": 3, "prezzo_totale":
+                Decimal128("89.97"), "taglia": "XS"},
+            {"nome": "Maglietta", "quantita": 1, "prezzo_totale":
+                Decimal128("19.99"), "taglia": "XL"}
         ],
         "totale_complessivo": Decimal128("109.96")
     },
     {
         "data": datetime.strptime("2024-07-04", "%Y-%m-%d"),
         "articoli": [
-            {"nome": "Camicia", "quantita": 2, "prezzo_totale": Decimal128("69.98"), "taglia": "XS"},
-            {"nome": "Pantaloni corti", "quantita": 1, "prezzo_totale": Decimal128("24.99"), "taglia": "M"}
+            {"nome": "Camicia", "quantita": 2, "prezzo_totale":
+                Decimal128("69.98"), "taglia": "XS"},
+            {"nome": "Pantaloni corti", "quantita": 1, "prezzo_totale":
+                Decimal128("24.99"), "taglia": "M"}
         ],
         "totale_complessivo": Decimal128("94.97")
     },
     {
         "data": datetime.strptime("2024-07-05", "%Y-%m-%d"),
         "articoli": [
-            {"nome": "Abito", "quantita": 1, "prezzo_totale": Decimal128("99.99"), "taglia": "M"},
-            {"nome": "Maglione", "quantita": 1, "prezzo_totale": Decimal128("59.99"), "taglia": "M"}
+            {"nome": "Abito", "quantita": 1, "prezzo_totale":
+                Decimal128("99.99"), "taglia": "M"},
+            {"nome": "Maglione", "quantita": 1, "prezzo_totale":
+                Decimal128("59.99"), "taglia": "M"}
         ],
         "totale_complessivo": Decimal128("159.98")
     },
     {
         "data": datetime.strptime("2024-07-06", "%Y-%m-%d"),
         "articoli": [
-            {"nome": "Giacca", "quantita": 1, "prezzo_totale": Decimal128("89.99"), "taglia": "S"},
-            {"nome": "Jeans", "quantita": 1, "prezzo_totale": Decimal128("49.99"), "taglia": "XS"}
+            {"nome": "Giacca", "quantita": 1, "prezzo_totale":
+                Decimal128("89.99"), "taglia": "S"},
+            {"nome": "Jeans", "quantita": 1, "prezzo_totale":
+                Decimal128("49.99"), "taglia": "XS"}
         ],
         "totale_complessivo": Decimal128("139.98")
     },
     {
         "data": datetime.strptime("2024-07-07", "%Y-%m-%d"),
         "articoli": [
-            {"nome": "Felpa", "quantita": 2, "prezzo_totale": Decimal128("79.98"), "taglia": "XS"},
-            {"nome": "Maglietta", "quantita": 3, "prezzo_totale": Decimal128("59.97"), "taglia": "XS"}
+            {"nome": "Felpa", "quantita": 2, "prezzo_totale":
+                Decimal128("79.98"), "taglia": "XS"},
+            {"nome": "Maglietta", "quantita": 3, "prezzo_totale":
+                Decimal128("59.97"), "taglia": "XS"}
         ],
         "totale_complessivo": Decimal128("139.95")
     },
     {
         "data": datetime.strptime("2024-07-08", "%Y-%m-%d"),
         "articoli": [
-            {"nome": "Cappotto", "quantita": 1, "prezzo_totale": Decimal128("129.99"), "taglia": "XL"},
-            {"nome": "Gonna", "quantita": 2, "prezzo_totale": Decimal128("59.98"), "taglia": "XL"}
+            {"nome": "Cappotto", "quantita": 1, "prezzo_totale":
+                Decimal128("129.99"), "taglia": "XL"},
+            {"nome": "Gonna", "quantita": 2, "prezzo_totale":
+                Decimal128("59.98"), "taglia": "XL"}
         ],
         "totale_complessivo": Decimal128("189.97")
     },
     {
         "data": datetime.strptime("2024-07-09", "%Y-%m-%d"),
         "articoli": [
-            {"nome": "Abito", "quantita": 2, "prezzo_totale": Decimal128("199.98"), "taglia": "XS"},
-            {"nome": "Camicia", "quantita": 1, "prezzo_totale": Decimal128("34.99"), "taglia": "M"}
+            {"nome": "Abito", "quantita": 2, "prezzo_totale":
+                Decimal128("199.98"), "taglia": "XS"},
+            {"nome": "Camicia", "quantita": 1, "prezzo_totale":
+                Decimal128("34.99"), "taglia": "M"}
         ],
         "totale_complessivo": Decimal128("234.97")
     },
     {
         "data": datetime.strptime("2024-07-10", "%Y-%m-%d"),
         "articoli": [
-            {"nome": "Maglione", "quantita": 1, "prezzo_totale": Decimal128("59.99"), "taglia": "XS"},
-            {"nome": "Pantaloni corti", "quantita": 2, "prezzo_totale": Decimal128("49.98"), "taglia": "XL"}
+            {"nome": "Maglione", "quantita": 1, "prezzo_totale":
+                Decimal128("59.99"), "taglia": "XS"},
+            {"nome": "Pantaloni corti", "quantita": 2, "prezzo_totale":
+                Decimal128("49.98"), "taglia": "XL"}
         ],
         "totale_complessivo": Decimal128("109.97")
     }
 ]
 
-for doc in scontrini:
-    collezione_scontrini.insert_one(doc)
+collezione_scontrini.insert_many(documents=scontrini)
+
 
 print("Scontrini inseriti con successo")
 
@@ -204,5 +223,3 @@ db.scontrini.insert_one({
         "totale_complessivo": Decimal128("69.98")
 })
 '''
-
-
