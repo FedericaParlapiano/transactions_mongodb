@@ -27,10 +27,10 @@ def callback(session):
 
         prezzo_completo = prezzo_giacca + prezzo_pantaloni
 
-        print("T2 - Prezzo giacca prima dell'update: ", prezzo_giacca)
-        print("T2 - Prezzo pantaloni prima dell'update: ", prezzo_pantaloni)
-        print("T2 - Prezzo completo giacca e pantaloni: ", round(float(prezzo_completo), 2))
-        print("T2 - Prezzo abito: ", prezzo_abito)
+        print("Prezzo giacca prima dell'update: ", prezzo_giacca)
+        print("Prezzo pantaloni prima dell'update: ", prezzo_pantaloni)
+        print("Prezzo completo giacca e pantaloni: ", round(float(prezzo_completo), 2))
+        print("Prezzo abito: ", prezzo_abito)
         print("")
 
         # Verifica della condizione e aggiornamento del prezzo
@@ -50,15 +50,15 @@ def callback(session):
 
             giacca = capiCollection.find_one({'nome': 'Giacca'}, {'_id': False}, session=session)
             prezzo_giacca = giacca.get("prezzo").to_decimal()
-            print("T2 - Prezzo giacca dopo l'update: ", prezzo_giacca)
+            print("Prezzo giacca dopo l'update: ", prezzo_giacca)
             print("")
 
             session.commit_transaction()
-            print("T2 - Commit")
+            print("Commit")
             print("")
         else:
             session.abort_transaction()
-            print("T2 - Abort: il prezzo del completo deve superare quello dell'abito")
+            print("Abort: il prezzo del completo deve superare quello dell'abito")
             print("")
 
     except Exception as e:
