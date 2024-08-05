@@ -19,7 +19,7 @@ def callback(session):
         giacca = capiCollection.find_one({'nome': 'Giacca'}, {'_id':False}, session=session)
         prezzo_giacca = giacca.get("prezzo").to_decimal()
 
-        print("T1 - Prezzo giacca (prima della modifica di T2): ", prezzo_giacca)
+        print("Prezzo giacca (prima della modifica di T2): ", prezzo_giacca)
         print("\n\n")
 
         time.sleep(6)
@@ -32,16 +32,16 @@ def callback(session):
 
         prezzo_completo = prezzo_giacca + prezzo_pantaloni
 
-        print("T1 - Prezzo pantaloni (dopo le modifiche di T2): ", prezzo_pantaloni)
-        print("\nT1 - Prezzo completo giacca e pantaloni (dopo le modifiche di T2): ", Decimal128(prezzo_completo))
-        print("T1 - Prezzo abito: ", prezzo_abito)
+        print("Prezzo pantaloni (dopo le modifiche di T2): ", prezzo_pantaloni)
+        print("\nPrezzo completo giacca e pantaloni (dopo le modifiche di T2): ", Decimal128(prezzo_completo))
+        print("Prezzo abito: ", prezzo_abito)
         print("")
 
         if prezzo_completo >= prezzo_abito:
-            print("T1 - Vincolo soddisfatto")
+            print("Vincolo soddisfatto")
         else:
             session.abort_transaction()
-            print("T1 - Vincolo non soddisfatto")
+            print("Vincolo non soddisfatto")
             print("Transazione abortita.")
 
     except Exception as e:
