@@ -1,11 +1,7 @@
-# Connect to MongoDB cluster with MongoClient
 from datetime import datetime
-
-from bson import Decimal128
 from pymongo import MongoClient
 
-connection_string = "mongodb+srv://arianna:arianna@cluster0.o61ssco.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-connection_string = "mongodb+srv://federica:federica@cluster1.1mnlttb.mongodb.net/?appName=mongosh+2.2.10"
+connection_string = "..."
 client = MongoClient(connection_string)
 
 # Step 1: Define the callback that specifies the sequence of operations to perform inside the transactions.
