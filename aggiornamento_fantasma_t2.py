@@ -34,13 +34,12 @@ def callback(session):
         print("")
 
         if prezzo_completo >= prezzo_abito:
-
             capiCollection.update_one({'nome': 'Pantaloni'}, {'$set': {'prezzo': Decimal128(prezzo_pantaloni-40)}}, session=session)
 
             pantaloni = capiCollection.find_one({'nome': 'Pantaloni'}, session=session)
             prezzo_pantaloni = pantaloni.get("prezzo").to_decimal()
 
-            print("T2 - Prezzo pantaloni dopo l'update: ", prezzo_pantaloni)
+            print("Prezzo pantaloni dopo l'update: ", prezzo_pantaloni)
             print("")
 
             capiCollection.update_one({'nome': 'Giacca'}, {'$set': {'prezzo': Decimal128(prezzo_giacca+40)}},
