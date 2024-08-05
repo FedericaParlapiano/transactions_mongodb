@@ -22,7 +22,7 @@ def callback(session):
         print("Prezzo giacca (prima della modifica di T2): ", prezzo_giacca)
         print("\n\n")
 
-        time.sleep(6)
+        time.sleep(5)
 
         abito = capiCollection.find_one({'nome': 'Abito'}, {'_id':False}, session=session)
         prezzo_abito = abito.get("prezzo").to_decimal()

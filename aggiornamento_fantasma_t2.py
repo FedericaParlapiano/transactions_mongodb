@@ -33,10 +33,8 @@ def callback(session):
         print("Prezzo abito: ", prezzo_abito)
         print("")
 
-        # Verifica della condizione e aggiornamento del prezzo
-        if prezzo_completo >= prezzo_abito + 20:
+        if prezzo_completo >= prezzo_abito:
 
-            time.sleep(4)
             capiCollection.update_one({'nome': 'Pantaloni'}, {'$set': {'prezzo': Decimal128(prezzo_pantaloni-40)}}, session=session)
 
             pantaloni = capiCollection.find_one({'nome': 'Pantaloni'}, session=session)
