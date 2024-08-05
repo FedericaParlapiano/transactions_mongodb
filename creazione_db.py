@@ -100,7 +100,7 @@ validator_scontrini = {
                         "taglia": {
                             "bsonType": "string",
                             "enum": ["XS", "S", "M", "L", "XL"],
-                            "description": "'taglia' deve essere una delle seguenti: 'XS', 'S', 'M', 'L', 'XL'"
+                            "description": "taglia deve essere una delle seguenti: 'XS', 'S', 'M', 'L', 'XL'"
                         },
                         "prezzo_totale": {
                             "bsonType": "decimal",
