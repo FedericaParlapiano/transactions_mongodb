@@ -27,10 +27,12 @@ def callback(session):
         print("Prezzo giacca prima dell'update: ", prezzo_giacca)
         print("Prezzo pantaloni prima dell'update: ", prezzo_pantaloni)
         print("Prezzo completo giacca e pantaloni prima dell'update: ", prezzo_completo)
-        print("Prezzo cappotto prima dell'update: ", prezzo_abito)
+        print("Prezzo abito prima dell'update: ", prezzo_abito)
         print("")
+        time.sleep(3)
 
         if prezzo_completo >= prezzo_abito + 20:
+            capiCollection.update_one({'nome': 'Pantaloni'}, {'$set': {'lock': 'true'}}, session=session)
             capiCollection.update_one({'nome': 'Giacca'}, {'$set': {'prezzo': Decimal128(str(prezzo_giacca-20))}}, session=session)
 
             giacca = capiCollection.find_one({'nome': 'Giacca'}, session=session)
@@ -45,8 +47,10 @@ def callback(session):
             print("Prezzo giacca dopo l'update: ", prezzo_giacca)
             print("Prezzo pantaloni dopo l'update: ", prezzo_pantaloni)
             print("Prezzo completo giacca e pantaloni dopo l'update: ", prezzo_completo)
-            print("Prezzo cappotto dopo l'update: ", prezzo_abito)
+            print("Prezzo abito dopo l'update: ", prezzo_abito)
             time.sleep(3)
+
+            capiCollection.update_one({'nome': 'Pantaloni'}, {'$unset': {'lock': 1}}, session=session)
             session.commit_transaction()
             print("\nTransazione andata a buon fine.\n")
             time.sleep(3)
