@@ -6,7 +6,7 @@ from pymongo.read_concern import ReadConcern
 import time
 
 
-client2 = MongoClient('mongodb+srv://federica:federica@cluster1.1mnlttb.mongodb.net/?appName=mongosh+2.2.10')
+client2 = MongoClient('...')
 
 session2 = client2.start_session()
 session2.start_transaction(
