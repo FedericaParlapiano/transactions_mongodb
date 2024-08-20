@@ -1,8 +1,7 @@
 from datetime import datetime
 from pymongo import MongoClient
 
-connection_string = "mongodb+srv://arianna:arianna@cluster0.o61ssco.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-connection_string = "mongodb+srv://federica:federica@cluster1.1mnlttb.mongodb.net/?appName=mongosh+2.2.10"
+connection_string = "..."
 client = MongoClient(connection_string)
 
 def callback(session, articolo=None, taglia=None):
