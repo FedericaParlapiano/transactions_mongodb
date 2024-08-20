@@ -5,8 +5,7 @@ from pymongo import MongoClient, WriteConcern
 from pymongo.errors import PyMongoError
 from pymongo.read_concern import ReadConcern
 
-connection_string = "mongodb+srv://arianna:arianna@cluster0.o61ssco.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-connection_string = "mongodb+srv://federica:federica@cluster1.1mnlttb.mongodb.net/?appName=mongosh+2.2.10"
+connection_string = "..."
 client = MongoClient(connection_string)
 
 def callback(session, colore):
