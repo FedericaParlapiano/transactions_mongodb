@@ -40,13 +40,11 @@ def callback(session):
         if prezzo_completo >= prezzo_abito:
             print("Vincolo soddisfatto")
         else:
-            session.abort_transaction()
             print("Vincolo non soddisfatto")
             print("Transazione abortita.")
 
     except Exception as e:
         print(f"Errore durante la transazione: {e.args[0]}")
-        session.abort_transaction()
 
     finally:
         session.end_session()

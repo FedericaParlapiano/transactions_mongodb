@@ -33,7 +33,6 @@ def callback(session, capo_id=None):
         print("\n\nTransazione andata a buon fine.\n")
     except Exception as e:
         print(f"\n\nErrore durante il commit della transazione: {e.args[0]}")
-        session.abort_transaction()
         return
 
 

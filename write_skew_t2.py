@@ -2,6 +2,8 @@ from bson import Decimal128
 from pymongo import MongoClient, WriteConcern
 from pymongo.errors import PyMongoError
 from pymongo.read_concern import ReadConcern
+from pymongo.read_preferences import ReadPreference
+
 import time
 
 connection_string = "mongodb+srv://arianna:arianna@cluster0.o61ssco.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
@@ -10,8 +12,11 @@ client = MongoClient(connection_string)
 
 def callback(session):
     capiCollection = session.client.negozio_abbigliamento.capi_abbigliamento.with_options(
-        write_concern=WriteConcern(w=1, j=False)
+        write_concern=WriteConcern(w=1, j=False),
+        read_preference=ReadPreference.SECONDARY
     )
+
+    print(session.client.negozio_abbigliamento.capi_abbigliamento.read_preference)
 
     try:
         abito = capiCollection.find_one({'nome': 'Abito'}, {'_id':False}, session=session)
@@ -92,7 +97,8 @@ with client.start_session() as session:
         session.with_transaction(
             callback_wrapper,
             read_concern=ReadConcern(level="local"),
-            write_concern=WriteConcern(w=1, j=False)
+            write_concern=WriteConcern(w=1, j=False),
+            read_preference=ReadPreference.SECONDARY
         )
     except PyMongoError as e:
         print(f"Transazione fallita: {e.args[0]}")

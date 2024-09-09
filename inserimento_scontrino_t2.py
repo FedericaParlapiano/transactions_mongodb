@@ -23,31 +23,32 @@ def callback(session, capi, taglie):
     totale_complessivo = 0
 
     print("")
-    for capo, taglia in zip(capi, taglie):
-        articolo = capiCollection.find_one({'nome': capo}, {'_id': False}, session=session)
-        prezzo_articolo = articolo.get("prezzo").to_decimal()
-
-        print(f"Tentativo di acquisto di {articolo.get('nome')} (taglia: {taglia}) con ID {articolo.get('capoId')}")
-        print(articolo)
-
-        time.sleep(1)
-
-        capiCollection.update_one({'nome': capo}, {'$inc': {f'disponibilita.{taglia}': -1}}, session=session)
-        articolo_aggiornato = capiCollection.find_one({'nome': capo}, {'_id': False},  session=session)
-        print(f"Aggiornamento quantità: {articolo_aggiornato}\n")
-
-        articoli.append({"nome": capo, "quantita": 1, "prezzo_totale": Decimal128(str(prezzo_articolo)), "taglia": taglia})
-        totale_complessivo += prezzo_articolo
-
-    totale_complessivo = Decimal128(str(totale_complessivo))
-
-    nuovo_scontrino = {
-        "data": datetime.strptime(str(datetime.now().date()), "%Y-%m-%d"),
-        "articoli": articoli,
-        "totale_complessivo": totale_complessivo
-    }
 
     try:
+        for capo, taglia in zip(capi, taglie):
+            articolo = capiCollection.find_one({'nome': capo}, {'_id': False}, session=session)
+            prezzo_articolo = articolo.get("prezzo").to_decimal()
+
+            print(f"Tentativo di acquisto di {articolo.get('nome')} (taglia: {taglia}) con ID {articolo.get('capoId')}")
+            print(articolo)
+
+            time.sleep(1)
+
+            capiCollection.update_one({'nome': capo}, {'$inc': {f'disponibilita.{taglia}': -1}}, session=session)
+            articolo_aggiornato = capiCollection.find_one({'nome': capo}, {'_id': False},  session=session)
+            print(f"Aggiornamento quantità: {articolo_aggiornato}\n")
+
+            articoli.append({"nome": capo, "quantita": 1, "prezzo_totale": Decimal128(str(prezzo_articolo)), "taglia": taglia})
+            totale_complessivo += prezzo_articolo
+
+        totale_complessivo = Decimal128(str(totale_complessivo))
+
+        nuovo_scontrino = {
+            "data": datetime.strptime(str(datetime.now().date()), "%Y-%m-%d"),
+            "articoli": articoli,
+            "totale_complessivo": totale_complessivo
+        }
+
         scontriniCollection.insert_one(nuovo_scontrino)
         print("Acquisto terminato.")
         print(f"Scontrino: {nuovo_scontrino}\n")
@@ -58,9 +59,8 @@ def callback(session, capi, taglie):
 
     except Exception as e:
         print(f"\n\nErrore durante la transazione: {e.args[0]}")
-        session.abort_transaction()
         print("\n\nTransazione abortita. \n")
-    return
+        return
 
 
 def callback_wrapper(s):

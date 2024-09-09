@@ -42,13 +42,11 @@ def callback(session, capo_id=None, additional_price=0):
             print("\n\nTransazione andata a buon fine.\n")
         except Exception as e:
             print(f"\n\nErrore durante il commit della transazione: {e.args[0]}")
-            session.abort_transaction()
             return
 
     except Exception as e:
         print(f"\n\nErrore durante l'aggiornamento: {e.args[0]}")
         print("\n\nTransazione abortita. \n")
-        session.abort_transaction()
         return
 
 
